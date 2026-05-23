@@ -471,3 +471,297 @@ button:hover {
     transform: scale(0.95) !important;
     opacity: 0.8;
 }
+
+/* Result Screen Classes */
+.result-stars {
+    font-size: 64px;
+    margin: 20px 0;
+    letter-spacing: 10px;
+}
+.result-score {
+    font-size: 20px;
+    margin: 10px 0;
+}
+.result-time {
+    font-size: 18px;
+    margin: 10px 0;
+    color: #FFD700;
+}
+.game-over-title {
+    font-size: 78px;
+    color: #FF4444;
+    text-shadow: 0 0 20px #FF4444;
+}
+
+/* Base Responsive Grid Adjustments */
+.level-grid {
+    grid-template-columns: repeat(auto-fit, minmax(60px, 1fr));
+    justify-content: center;
+}
+
+/* Responsive Media Queries */
+
+/* Tablet & Large Mobile */
+@media screen and (max-width: 768px) {
+    .main-menu .title {
+        font-size: 3rem;
+        margin-bottom: 2rem;
+    }
+    
+    .level-selector h2 {
+        font-size: 2.2rem;
+        margin-bottom: 1.5rem;
+    }
+    
+    .tutorial-overlay .tutorial-card {
+        padding: 2rem;
+        width: 90%;
+    }
+    
+    .tutorial-overlay h1 {
+        font-size: 2rem;
+        margin-bottom: 1.5rem;
+    }
+    
+    .result-screen h1 {
+        font-size: 2.2rem;
+    }
+    
+    .game-over-title {
+        font-size: 50px;
+    }
+    
+    .result-stars {
+        font-size: 48px;
+        letter-spacing: 5px;
+    }
+    
+    button {
+        padding: 0.8rem 1.5rem;
+        font-size: 1rem;
+    }
+    
+    .menu-buttons {
+        width: 80%;
+        max-width: 300px;
+    }
+    
+    .level-grid {
+        grid-template-columns: repeat(5, 1fr);
+        gap: 0.8rem;
+    }
+}
+
+/* Mobile Devices */
+@media screen and (max-width: 480px) {
+    .main-menu .title {
+        font-size: 2.2rem;
+        margin-bottom: 1.5rem;
+    }
+    
+    .main-menu .subtitle {
+        font-size: 1rem;
+        letter-spacing: 0.2rem;
+    }
+    
+    .level-selector h2 {
+        font-size: 1.8rem;
+    }
+    
+    .level-grid {
+        grid-template-columns: repeat(5, 1fr);
+        gap: 0.5rem;
+    }
+    
+    .level-btn {
+        width: 50px;
+        height: 50px;
+        font-size: 1rem;
+    }
+    
+    .result-screen h1 {
+        font-size: 1.8rem;
+    }
+    
+    .game-over-title {
+        font-size: 40px;
+    }
+    
+    .result-stars {
+        font-size: 36px;
+        letter-spacing: 2px;
+        margin: 10px 0;
+    }
+    
+    .result-score {
+        font-size: 16px;
+    }
+    
+    .result-time {
+        font-size: 14px;
+    }
+    
+    .tutorial-overlay h1 {
+        font-size: 1.5rem;
+    }
+    
+    .tutorial-content p {
+        font-size: 0.9rem;
+    }
+    
+    button {
+        padding: 0.6rem 1.2rem;
+        font-size: 0.9rem;
+    }
+}
+
+/* --- HUD Layout & Responsive Navbar --- */
+.game-hud {
+    width: 100%;
+    padding: 0 16px;
+    height: 60px;
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    background-color: #1a1a1a;
+    border-bottom: 2px solid #444;
+    font-family: 'Inter', sans-serif;
+    font-size: 16px;
+    color: #FFFFFF;
+    z-index: 100;
+    box-sizing: border-box;
+    flex-shrink: 0;
+}
+
+/* LEFT group: back button + stage */
+.hud-left-group {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+    justify-content: flex-start;
+}
+
+.hud-back-btn {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    color: #FFD700;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-family: 'Inter', sans-serif;
+    font-weight: 700;
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 4px 8px;
+    border-radius: 6px;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+.hud-back-btn .icon {
+    font-size: 18px;
+    line-height: 1;
+}
+
+.hud-stage {
+    font-size: 15px;
+    font-weight: 600;
+    color: #ccc;
+    white-space: nowrap;
+}
+
+/* CENTER: Stars */
+.hud-stars {
+    font-size: 26px;
+    color: #FFD700;
+    text-align: center;
+    line-height: 1;
+    text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+    white-space: nowrap;
+}
+
+/* RIGHT group: Time + Score */
+.hud-right-group {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 16px;
+    min-width: 0;
+}
+
+.hud-time {
+    font-size: 15px;
+    font-weight: 600;
+    color: #fff;
+    white-space: nowrap;
+}
+
+.hud-score {
+    font-size: 15px;
+    font-weight: 600;
+    color: #fff;
+    white-space: nowrap;
+}
+
+/* HUD Tablet */
+@media screen and (max-width: 768px) {
+    .game-hud {
+        height: 52px;
+        padding: 0 12px;
+        font-size: 14px;
+    }
+
+    .hud-stars {
+        font-size: 22px;
+    }
+
+    .hud-back-btn {
+        font-size: 12px;
+    }
+
+    .hud-right-group {
+        gap: 10px;
+    }
+
+    .hud-time,
+    .hud-score,
+    .hud-stage {
+        font-size: 13px;
+    }
+}
+
+/* HUD Mobile */
+@media screen and (max-width: 480px) {
+    .game-hud {
+        height: 48px;
+        padding: 0 8px;
+        grid-template-columns: auto auto 1fr;
+        gap: 6px;
+    }
+
+    .hud-back-btn .text {
+        display: none;
+    }
+
+    .hud-back-btn .icon {
+        font-size: 20px;
+    }
+
+    .hud-stars {
+        font-size: 18px;
+        text-align: left;
+    }
+
+    .hud-right-group {
+        gap: 8px;
+    }
+
+    .hud-time,
+    .hud-score,
+    .hud-stage {
+        font-size: 12px;
+    }
+}

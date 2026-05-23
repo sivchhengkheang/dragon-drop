@@ -297,10 +297,10 @@ function App() {
             )}
 
             {/* Achievement Notification */}
-            <AchievementNotification
+            {/* <AchievementNotification
                 achievement={currentAchievement}
                 onClose={() => setCurrentAchievement(null)}
-            />
+            /> */}
         </div>
     );
 }
@@ -325,11 +325,7 @@ const LevelCompleteScreen = ({ gameState, onNextLevel, onLevels }: { gameState: 
     return (
         <div className="overlay result-screen win">
             <h1>LEVEL COMPLETE!</h1>
-            <div className="stars" style={{
-                fontSize: '64px',
-                margin: '20px 0',
-                letterSpacing: '10px'
-            }}>
+            <div className="stars result-stars">
                 {[...Array(3)].map((_, i) => (
                     <span
                         key={i}
@@ -345,8 +341,8 @@ const LevelCompleteScreen = ({ gameState, onNextLevel, onLevels }: { gameState: 
                     </span>
                 ))}
             </div>
-            <p style={{ fontSize: '20px', margin: '10px 0' }}>Score: {gameState.score}</p>
-            <p style={{ fontSize: '18px', margin: '10px 0', color: '#FFD700' }}>
+            <p className="result-score">Score: {gameState.score}</p>
+            <p className="result-time">
                 Time Left: {Math.floor(gameState.timeLeft)}s
             </p>
 
@@ -379,7 +375,7 @@ const GameOverScreen = ({ onMenu, onRetry }: { onMenu: () => void, onRetry: () =
 
     return (
         <div className="overlay result-screen game-over">
-            <h1 style={{ fontSize: '78px', color: '#FF4444', textShadow: '0 0 20px #FF4444' }}>GAME OVER</h1>
+            <h1 className="game-over-title">GAME OVER</h1>
             <div style={{ display: 'flex', gap: '20px', marginTop: '20px' }}>
                 <button onClick={onMenu}>MENU</button>
                 <button onClick={onRetry} style={{ minWidth: '160px' }}>

@@ -31,7 +31,7 @@ export const AchievementNotification = ({ achievement, onClose }: AchievementNot
     if (!achievement) return null;
 
     return (
-        <div className={`achievement-notification ${visible ? 'visible' : ''}`}>
+        <div className={` achievement-notification ${visible ? 'visible' : ''}`}>
             <button className="achievement-close" onClick={handleClose} aria-label="Close">
                 ×
             </button>

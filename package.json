@@ -11,7 +11,10 @@
     "build": "npx tsc && vite build",
     "preview": "vite preview",
     "electron:dev": "concurrently -k \"cross-env BROWSER=none npm run dev\" \"wait-on tcp:5173 && tsc -p electron -w\" \"wait-on tcp:5173 && tsc -p electron && electron .\"",
-    "electron:build": "vite build && tsc -p electron && electron-builder"
+    "electron:build": "vite build && tsc -p electron/tsconfig.json && electron-builder",
+    "build:linux": "vite build && tsc -p electron/tsconfig.json && electron-builder --linux AppImage",
+    "build:win": "vite build && tsc -p electron/tsconfig.json && electron-builder --win nsis",
+    "build:all": "vite build && tsc -p electron/tsconfig.json && electron-builder --linux AppImage --win nsis"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.1",
@@ -21,7 +24,7 @@
     "@vitejs/plugin-react": "^5.1.1",
     "concurrently": "^9.2.1",
     "cross-env": "^10.1.0",
-    "electron": "^40.4.1",
+    "electron": "^40.4.0",
     "electron-builder": "^26.7.0",
     "eslint": "^9.39.1",
     "eslint-plugin-react-hooks": "^7.0.1",
@@ -46,7 +49,20 @@
       "target": [
         "AppImage"
       ],
-      "category": "Game"
+      "category": "Game",
+      "icon": "public/dragon-logo.png"
+    },
+    "win": {
+      "target": "nsis",
+      "icon": "public/dragon-logo.png",
+      "signAndEditExecutable": false
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowElevation": true,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true
     }
   },
   "dependencies": {

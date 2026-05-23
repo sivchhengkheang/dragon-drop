@@ -363,10 +363,12 @@ export class GameEngine {
 
 
     private bindEvents() {
+        // mousedown on the canvas to start drag
         this.canvas.addEventListener('mousedown', this.onMouseDown);
-        this.canvas.addEventListener('mousemove', this.onMouseMove);
-        this.canvas.addEventListener('mouseup', this.onMouseUp);
-        this.canvas.addEventListener('mouseleave', this.onMouseUp);
+        // mousemove & mouseup on WINDOW so drag isn't interrupted when cursor
+        // briefly exits the canvas boundary (critical for big screens)
+        window.addEventListener('mousemove', this.onMouseMove);
+        window.addEventListener('mouseup', this.onMouseUp);
 
         // Touch events
         this.canvas.addEventListener('touchstart', this.onTouchStart, { passive: false });
@@ -384,9 +386,8 @@ export class GameEngine {
             cancelAnimationFrame(this.animationFrameId);
         }
         this.canvas.removeEventListener('mousedown', this.onMouseDown);
-        this.canvas.removeEventListener('mousemove', this.onMouseMove);
-        this.canvas.removeEventListener('mouseup', this.onMouseUp);
-        this.canvas.removeEventListener('mouseleave', this.onMouseUp);
+        window.removeEventListener('mousemove', this.onMouseMove);
+        window.removeEventListener('mouseup', this.onMouseUp);
 
         this.canvas.removeEventListener('touchstart', this.onTouchStart);
         this.canvas.removeEventListener('touchmove', this.onTouchMove);
@@ -404,12 +405,14 @@ export class GameEngine {
 
     /* --- Input Handling --- */
     private getMousePos(e: MouseEvent | Touch) {
-        // Use cached rect
-        const scaleX = 1000 / this.rect.width;
-        const scaleY = 1000 / this.rect.height;
+        // Always read a fresh rect — the canvas can be repositioned/scaled
+        // (e.g. on mobile after layout settles), so a cached rect will be stale.
+        const rect = this.canvas.getBoundingClientRect();
+        const scaleX = this.canvas.width / rect.width;
+        const scaleY = this.canvas.height / rect.height;
         return {
-            x: (e.clientX - this.rect.left) * scaleX,
-            y: (e.clientY - this.rect.top) * scaleY
+            x: (e.clientX - rect.left) * scaleX,
+            y: (e.clientY - rect.top) * scaleY
         };
     }
 
@@ -436,18 +439,19 @@ export class GameEngine {
 
     private onTouchMove = (e: TouchEvent) => {
         e.preventDefault();
-        if (!this.isDragging) return;
         const touch = e.touches[0];
         const pos = this.getMousePos(touch);
+
+        if (!this.isDragging) return;
 
         // Update Velocity & Position
         const newX = pos.x + this.dragOffset.x;
         const newY = pos.y + this.dragOffset.y;
 
-        // Update Facing based on movement direction
-        if (newX < this.dragonPos.x) {
+        // Update Facing based on movement direction with deadzone to prevent jitter
+        if (newX < this.dragonPos.x - 2) {
             this.facing = 'left';
-        } else if (newX > this.dragonPos.x) {
+        } else if (newX > this.dragonPos.x + 2) {
             this.facing = 'right';
         }
 
@@ -476,11 +480,13 @@ export class GameEngine {
         if (this.state.status !== 'PLAYING') return;
 
         const pos = this.getMousePos(e);
-        // Check if clicking dragon (Radius ~40)
+        // Check if clicking dragon — use 80px radius (same as touch) so it
+        // feels natural on both small and large screens
         const dist = Math.hypot(pos.x - this.dragonPos.x, pos.y - this.dragonPos.y);
-        if (dist < 60) { // Slight larger hit area for ease
+        if (dist < 80) {
             this.isDragging = true;
             this.dragOffset = { x: this.dragonPos.x - pos.x, y: this.dragonPos.y - pos.y };
+            this.canvas.style.cursor = 'grabbing';
             AudioManager.getInstance().playSFX('pop');
             this.particleSystem.emit(this.dragonPos.x, this.dragonPos.y, 10, '#FFFFFF');
             this.hasMoved = true; // Mark as moved on interaction
@@ -488,19 +494,21 @@ export class GameEngine {
     };
 
     private onMouseMove = (e: MouseEvent) => {
-        if (this.state.status !== 'PLAYING') return;
-        const pos = this.getMousePos(e);
-
         if (!this.isDragging) return;
+        if (this.state.status !== 'PLAYING') return;
+
+        // getMousePos works correctly whether event originates from the canvas
+        // or from window (big-screen drag that exits canvas bounds)
+        const pos = this.getMousePos(e);
 
         // Update Velocity & Position
         const newX = pos.x + this.dragOffset.x;
         const newY = pos.y + this.dragOffset.y;
 
-        // Update Facing based on movement direction
-        if (newX < this.dragonPos.x) {
+        // Update Facing based on movement direction with deadzone to prevent jitter
+        if (newX < this.dragonPos.x - 2) {
             this.facing = 'left';
-        } else if (newX > this.dragonPos.x) {
+        } else if (newX > this.dragonPos.x + 2) {
             this.facing = 'right';
         }
 
@@ -521,7 +529,10 @@ export class GameEngine {
     };
 
     private onMouseUp = () => {
-        this.isDragging = false;
+        if (this.isDragging) {
+            this.isDragging = false;
+            this.canvas.style.cursor = 'default';
+        }
     };
 
     private onKeyDown = (e: KeyboardEvent) => {
@@ -913,6 +924,8 @@ export class GameEngine {
     };
 
     private handleKeyboardMovement(timeScale: number) {
+        if (this.isDragging) return; // Physics handled by mouse/touch
+
         const settings = SettingsManager.getInstance().getSettings();
         if (!settings.keyboardControlsEnabled) return;
         if (this.state.status !== 'PLAYING') return;
