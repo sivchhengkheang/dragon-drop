@@ -12,18 +12,20 @@ const createWindow = () => {
         minHeight: 600,
         title: 'Dragon Drop',
         icon: path.join(__dirname, '../public/dragon-logo.png'),
+        frame: true,        // Keep native title bar — minimize / close always work
+        fullscreen: false,  // Never fullscreen — preserve window controls
+        resizable: true,
+        center: true,       // Start centered on screen at default size
         webPreferences: {
             preload: path.join(__dirname, 'preload.cjs'),
             contextIsolation: true,
             nodeIntegration: false,
         },
-        // Don't show until ready to avoid white flash on startup
-        show: false,
+        show: false,        // Avoid white flash on startup
     });
 
-    // Show & maximize once content is ready
+    // Show at default size — user can maximize manually if they want
     mainWindow.once('ready-to-show', () => {
-        mainWindow.maximize();
         mainWindow.show();
     });
 
