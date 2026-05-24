@@ -21,15 +21,11 @@ export class SessionManager {
      */
     private setupCloseDetection() {
         // Mark as refresh when page starts loading
-        window.addEventListener('beforeunload', (e) => {
+        window.addEventListener('beforeunload', () => {
             // Set flag to detect if this is a refresh or close
+            // NOTE: Do NOT call e.preventDefault() or set e.returnValue here —
+            // doing so blocks the Electron window from closing.
             sessionStorage.setItem('isRefreshing', 'true');
-
-            // Show confirmation dialog
-            const message = 'Are you sure you want to close? Your progress will be lost!';
-            e.preventDefault();
-            e.returnValue = message;
-            return message;
         });
 
         // On page load, check if it was a refresh
