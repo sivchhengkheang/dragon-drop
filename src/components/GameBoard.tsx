@@ -36,24 +36,32 @@ export const GameBoard = ({ gameState, onStateChange }: GameBoardProps) => {
 
     return (
         <div className="game-board-container" style={{
-            width: '100vw',
-            height: '100vh',
+            flex: 1,
+            width: '100%',
             display: 'flex',
             justifyContent: 'center',
             alignItems: 'center',
-            backgroundColor: '#333'
+            backgroundColor: '#1a1a1a',
+            overflow: 'hidden',
+            // No asymmetric padding — keep canvas perfectly centered so
+            // getBoundingClientRect() matches where the user sees the canvas
+            padding: '8px',
+            boxSizing: 'border-box',
         }}>
-            {/* Aspect Ratio Container (Square-ish 1:1 or 4:3? logic is 1000x1000) */}
             <canvas
                 ref={canvasRef}
                 width={1000}
                 height={1000}
                 style={{
+                    // Let the canvas fill as much of the container as possible
+                    // while staying square (aspect-ratio enforces 1:1)
                     maxWidth: '100%',
                     maxHeight: '100%',
                     aspectRatio: '1 / 1',
-                    boxShadow: '0 0 20px rgba(0,0,0,0.5)',
-                    cursor: 'default'
+                    display: 'block',
+                    boxShadow: '0 0 30px rgba(0,0,0,0.6)',
+                    // Cursor hint: pointer when hovering to show it's interactive
+                    cursor: 'grab',
                 }}
             />
         </div>

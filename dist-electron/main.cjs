@@ -1,61 +1,54 @@
 "use strict";
-var __create = Object.create;
-var __defProp = Object.defineProperty;
-var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
-var __getOwnPropNames = Object.getOwnPropertyNames;
-var __getProtoOf = Object.getPrototypeOf;
-var __hasOwnProp = Object.prototype.hasOwnProperty;
-var __copyProps = (to, from, except, desc) => {
-  if (from && typeof from === "object" || typeof from === "function") {
-    for (let key of __getOwnPropNames(from))
-      if (!__hasOwnProp.call(to, key) && key !== except)
-        __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
-  }
-  return to;
+const { app, BrowserWindow, Menu } = require('electron');
+const path = require('path');
+const createWindow = () => {
+    // Remove the default application menu (cleaner for a game)
+    Menu.setApplicationMenu(null);
+    const mainWindow = new BrowserWindow({
+        width: 1280,
+        height: 800,
+        minWidth: 800,
+        minHeight: 600,
+        title: 'Dragon Drop',
+        // In dev: public/ is served live.  In production: Vite copies public/ → dist/
+        // so we must point to dist/ at runtime (public/ is NOT packaged by electron-builder).
+        icon: process.env.VITE_DEV_SERVER_URL
+            ? path.join(__dirname, process.platform === 'win32' ? '../public/dragon-logo.ico' : '../public/dragon-logo.png')
+            : path.join(__dirname, process.platform === 'win32' ? '../dist/dragon-logo.ico' : '../dist/dragon-logo.png'),
+        frame: true, // Keep native title bar — minimize / close always work
+        fullscreen: false, // Never fullscreen — preserve window controls
+        resizable: true,
+        center: true, // Start centered on screen at default size
+        webPreferences: {
+            preload: path.join(__dirname, 'preload.cjs'),
+            contextIsolation: true,
+            nodeIntegration: false,
+        },
+        show: false, // Avoid white flash on startup
+    });
+    // Show at default size — user can maximize manually if they want
+    mainWindow.once('ready-to-show', () => {
+        mainWindow.show();
+    });
+    // Clearly separate dev and production loading
+    if (process.env.VITE_DEV_SERVER_URL) {
+        mainWindow.loadURL(process.env.VITE_DEV_SERVER_URL);
+        // Open DevTools only in development
+        mainWindow.webContents.openDevTools();
+    }
+    else {
+        // Production: load bundled dist files — fully offline, no internet needed
+        mainWindow.loadFile(path.join(__dirname, '../dist/index.html'));
+    }
 };
-var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__getProtoOf(mod)) : {}, __copyProps(
-  // If the importer is in node compatibility mode or this is not an ESM
-  // file that has been converted to a CommonJS file using a Babel-
-  // compatible transform (i.e. "__esModule" has not been set), then set
-  // "default" to the CommonJS "module.exports" for node compatibility.
-  isNodeMode || !mod || !mod.__esModule ? __defProp(target, "default", { value: mod, enumerable: true }) : target,
-  mod
-));
-
-// electron/main.ts
-var import_electron = require("electron");
-var import_node_path = __toESM(require("node:path"), 1);
-process.env.DIST = import_node_path.default.join(__dirname, "../dist");
-process.env.VITE_PUBLIC = import_electron.app.isPackaged ? process.env.DIST : import_node_path.default.join(__dirname, "../public");
-var win;
-var VITE_DEV_SERVER_URL = process.env["VITE_DEV_SERVER_URL"];
-function createWindow() {
-  win = new import_electron.BrowserWindow({
-    icon: import_node_path.default.join(process.env.VITE_PUBLIC, "electron-vite.svg"),
-    webPreferences: {
-      preload: import_node_path.default.join(__dirname, "preload.cjs")
-    },
-    fullscreen: true,
-    // Kiosk mode by default
-    autoHideMenuBar: true
-  });
-  win.webContents.on("did-finish-load", () => {
-    win?.webContents.send("main-process-message", (/* @__PURE__ */ new Date()).toLocaleString());
-  });
-  if (VITE_DEV_SERVER_URL) {
-    win.loadURL(VITE_DEV_SERVER_URL);
-  } else {
-    win.loadFile(import_node_path.default.join(process.env.DIST, "index.html"));
-  }
-}
-import_electron.app.on("window-all-closed", () => {
-  if (process.platform !== "darwin") {
-    import_electron.app.quit();
-  }
+app.on('ready', createWindow);
+app.on('window-all-closed', () => {
+    if (process.platform !== 'darwin') {
+        app.quit();
+    }
 });
-import_electron.app.on("activate", () => {
-  if (import_electron.BrowserWindow.getAllWindows().length === 0) {
-    createWindow();
-  }
+app.on('activate', () => {
+    if (BrowserWindow.getAllWindows().length === 0) {
+        createWindow();
+    }
 });
-import_electron.app.whenReady().then(createWindow);
