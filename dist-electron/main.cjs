@@ -10,7 +10,11 @@ const createWindow = () => {
         minWidth: 800,
         minHeight: 600,
         title: 'Dragon Drop',
-        icon: path.join(__dirname, '../public/dragon-logo.png'),
+        // In dev: public/ is served live.  In production: Vite copies public/ → dist/
+        // so we must point to dist/ at runtime (public/ is NOT packaged by electron-builder).
+        icon: process.env.VITE_DEV_SERVER_URL
+            ? path.join(__dirname, process.platform === 'win32' ? '../public/dragon-logo.ico' : '../public/dragon-logo.png')
+            : path.join(__dirname, process.platform === 'win32' ? '../dist/dragon-logo.ico' : '../dist/dragon-logo.png'),
         frame: true, // Keep native title bar — minimize / close always work
         fullscreen: false, // Never fullscreen — preserve window controls
         resizable: true,
