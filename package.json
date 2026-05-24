@@ -10,11 +10,12 @@
     "dev": "vite",
     "build": "npx tsc && vite build",
     "preview": "vite preview",
+    "generate:ico": "node scripts/generate-ico.mjs",
     "electron:dev": "concurrently -k \"cross-env BROWSER=none npm run dev\" \"wait-on tcp:5173 && tsc -p electron -w\" \"wait-on tcp:5173 && tsc -p electron && electron .\"",
-    "electron:build": "vite build && tsc -p electron/tsconfig.json && electron-builder",
-    "build:linux": "vite build && tsc -p electron/tsconfig.json && electron-builder --linux AppImage",
-    "build:win": "vite build && tsc -p electron/tsconfig.json && electron-builder --win nsis",
-    "build:all": "vite build && tsc -p electron/tsconfig.json && electron-builder --linux AppImage --win nsis"
+    "electron:build": "node scripts/generate-ico.mjs && vite build && tsc -p electron/tsconfig.json && electron-builder",
+    "build:linux": "node scripts/generate-ico.mjs && vite build && tsc -p electron/tsconfig.json && electron-builder --linux AppImage",
+    "build:win": "node scripts/generate-ico.mjs && vite build && tsc -p electron/tsconfig.json && electron-builder --win nsis",
+    "build:all": "node scripts/generate-ico.mjs && vite build && tsc -p electron/tsconfig.json && electron-builder --linux AppImage --win nsis"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.1",
