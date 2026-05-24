@@ -54,7 +54,7 @@
     },
     "win": {
       "target": "nsis",
-      "icon": "public/dragon-logo.png",
+      "icon": "public/dragon-logo.ico",
       "signAndEditExecutable": false
     },
     "nsis": {

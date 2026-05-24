@@ -11,7 +11,7 @@ const createWindow = () => {
         minWidth: 800,
         minHeight: 600,
         title: 'Dragon Drop',
-        icon: path.join(__dirname, '../public/dragon-logo.png'),
+        icon: path.join(__dirname, process.platform === 'win32' ? '../public/dragon-logo.ico' : '../public/dragon-logo.png'),
         frame: true,        // Keep native title bar — minimize / close always work
         fullscreen: false,  // Never fullscreen — preserve window controls
         resizable: true,
